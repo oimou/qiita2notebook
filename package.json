@@ -1,0 +1,28 @@
+{
+  "name": "qiita2notebook",
+  "version": "1.0.0",
+  "description": "Convert Qiita articles to Jupyter Notebook.",
+  "main": "index.js",
+  "bin": {
+    "qiita2notebook": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oimou/qiita2notebook.git"
+  },
+  "keywords": [
+    "qiita",
+    "ipython",
+    "jupyter",
+    "notebook",
+    "ipynb"
+  ],
+  "author": "oimou <s1190013@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^1.6.0"
+  }
+}
