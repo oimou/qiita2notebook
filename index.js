@@ -81,6 +81,9 @@ function md2ipynb(markdown) {
 
 		// ending line of code block
 		} else if (isCodeBlock && line.match(/^```$/)) {
+			// trim the last line break
+			cell.source[cell.source.length - 1] = cell.source[cell.source.length - 1].replace(/\n$/, "");
+
 			ipynb.cells.push(cell);
 			cell = Object.assign({}, template.markdownCell);
 			cell.source = [];
