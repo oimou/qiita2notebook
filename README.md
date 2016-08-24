@@ -15,13 +15,13 @@ npm install -g qiita2notebook
 ## Usage
 
 ```
-qiita2notebook some_article_id > some_article_title.ipynb
+qiita2notebook some_article_url_or_id
 ```
 
 ## Example
 
 ```
-qiita2notebook ff6ae04d6cf02f1b6edf > "TensorFlowチュートリアル - ML初心者のためのMNIST（翻訳）.ipynb"
+qiita2notebook http://qiita.com/KojiOhki/items/ff6ae04d6cf02f1b6edf
 ```
 
 ## License
