@@ -64,6 +64,7 @@ function md2ipynb(markdown) {
 	const ipynb = Object.assign({}, template.ipynb);
 
 	let isCodeBlock = false;
+	let isMathBlock = false;
 	let cell = Object.assign({}, template.markdownCell);
 
 	ipynb.cells = [];
@@ -76,6 +77,7 @@ function md2ipynb(markdown) {
 			cell = Object.assign({}, template.codeCell);
 			cell.source = [];
 			isCodeBlock = true;
+			isMathBlock = false;
 
 		// ending line of code block
 		} else if (isCodeBlock && line.match(/^```$/)) {
@@ -83,14 +85,35 @@ function md2ipynb(markdown) {
 			cell = Object.assign({}, template.markdownCell);
 			cell.source = [];
 			isCodeBlock = false;
+			isMathBlock = false;
 
 		// inside code block
 		} else if (isCodeBlock) {
 			cell.source.push(line + "\n");
 
+		// starting line of math block
+		} else if (line.match(/^```math/)) {
+			ipynb.cells.push(cell);
+			cell = Object.assign({}, template.markdownCell);
+			cell.source = [];
+			isCodeBlock = false;
+			isMathBlock = true;
+
+		// ending line of math block
+		} else if (isMathBlock && line.match(/^```$/)) {
+			ipynb.cells.push(cell);
+			cell = Object.assign({}, template.markdownCell);
+			cell.source = [];
+			isCodeBlock = false;
+			isMathBlock = false;
+
+		// inside math block
+		} else if (isMathBlock) {
+			cell.source.push("$$ " + line + " $$\n");
+
 		// normal block
 		} else {
-			cell.source.push(line + "\n");
+			cell.source.push(line.replace(/^(#+)(\W)/, "$1 $2") + "\n");
 		}
 	});
 
