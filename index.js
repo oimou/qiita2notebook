@@ -113,7 +113,7 @@ function md2ipynb(markdown) {
 
 		// normal block
 		} else {
-			cell.source.push(line + "\n");
+			cell.source.push(line.replace(/^(#+)(\W)/, "$1 $2") + "\n");
 		}
 	});
 
