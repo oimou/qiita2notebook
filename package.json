@@ -1,6 +1,6 @@
 {
   "name": "qiita2notebook",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Convert Qiita articles to Jupyter Notebook.",
   "main": "index.js",
   "bin": {
