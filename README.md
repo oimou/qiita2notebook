@@ -21,7 +21,7 @@ qiita2notebook some_article_id > some_article_title.ipynb
 ## Example
 
 ```
-qiita2notebook ff6ae04d6cf02f1b6edf > TensorFlowチュートリアル - ML初心者のためのMNIST（翻訳）.ipynb
+qiita2notebook ff6ae04d6cf02f1b6edf > "TensorFlowチュートリアル - ML初心者のためのMNIST（翻訳）.ipynb"
 ```
 
 ## License
