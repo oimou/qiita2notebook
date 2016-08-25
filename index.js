@@ -128,7 +128,9 @@ function md2ipynb(markdown) {
 
 		// inside math block
 		} else if (isMathBlock) {
-			cell.source.push("$$ " + line + " $$\n");
+			if (!/^\\(?:begin|end)\{align\}/.test(line)) {
+				cell.source.push("$$ " + line.replace(/^&\s*/, "") + " $$\n");
+			}
 
 		// normal block
 		} else {
