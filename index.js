@@ -3,7 +3,6 @@ const fs = require("fs");
 const url = require("url");
 const fetch = require("node-fetch");
 const baseUrl = "http://qiita.com/api/v2/items/";
-const item_id = url.parse(process.argv[2]).pathname.split("/").pop();
 const template = {
 	ipynb: {
 		"cells": null,
@@ -44,32 +43,6 @@ const template = {
 		"source": null
 	}
 };
-
-const targetUrl = baseUrl + item_id;
-
-console.info(`Fetching: ${targetUrl}`);
-
-fetch(targetUrl)
-	.then(res => {
-		return res.json();
-	})
-	.then(json => {
-		const title = json.title;
-		const markdown = json.body;
-		const ipynb = md2ipynb(markdown);
-		const content = JSON.stringify(ipynb, null, " ");
-		const filename = title + ".ipynb";
-
-		// output to file
-		fs.writeFile(filename, content, err => {
-			if (err) {
-				return console.error(err);
-			}
-
-			console.info(`Saved: ${filename}`);
-		});
-	})
-	.catch(err => console.error(err));
 
 /**
  *	@param {String} markdown
@@ -142,3 +115,32 @@ function md2ipynb(markdown) {
 }
 
 exports.md2ipynb = md2ipynb;
+
+if (require.main === module) {
+	const item_id = url.parse(process.argv[2]).pathname.split("/").pop();
+	const targetUrl = baseUrl + item_id;
+
+	console.info(`Fetching: ${targetUrl}`);
+
+	fetch(targetUrl)
+		.then(res => {
+			return res.json();
+		})
+		.then(json => {
+			const title = json.title;
+			const markdown = json.body;
+			const ipynb = md2ipynb(markdown);
+			const content = JSON.stringify(ipynb, null, " ");
+			const filename = title + ".ipynb";
+
+			// output to file
+			fs.writeFile(filename, content, err => {
+				if (err) {
+					return console.error(err);
+				}
+
+				console.info(`Saved: ${filename}`);
+			});
+		})
+		.catch(err => console.error(err));
+}
