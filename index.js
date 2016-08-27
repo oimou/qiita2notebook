@@ -88,7 +88,7 @@ function md2ipynb(markdown) {
 
 	lines.forEach(line => {
 		// starting line of code block
-		if (line.match(/^```(?:py\d|python\d|.+\.py)$/)) {
+		if (!isCodeBlock && !isMathBlock && line.match(/^```(?:py\d?|python\d?|.+\.py)?$/)) {
 			ipynb.cells.push(cell);
 			cell = Object.assign({}, template.codeCell);
 			cell.source = [];
@@ -128,9 +128,7 @@ function md2ipynb(markdown) {
 
 		// inside math block
 		} else if (isMathBlock) {
-			if (!/^\\(?:begin|end)\{align\}/.test(line)) {
-				cell.source.push("$$ " + line.replace(/^&\s*/, "") + " $$\n");
-			}
+			cell.source.push("$$ " + line + " $$\n");
 
 		// normal block
 		} else {
