@@ -52,6 +52,7 @@ function md2ipynb(markdown) {
 	const lines = markdown.split("\n");
 	const ipynb = Object.assign({}, template.ipynb);
 
+	let isBlock = false;
 	let isCodeBlock = false;
 	let isMathBlock = false;
 	let cell = Object.assign({}, template.markdownCell);
@@ -60,50 +61,49 @@ function md2ipynb(markdown) {
 	cell.source = [];
 
 	lines.forEach(line => {
-		// starting line of code block
-		if (!isCodeBlock && !isMathBlock && line.match(/^```(?:py\d?|python\d?|.+\.py)?$/)) {
-			ipynb.cells.push(cell);
-			cell = Object.assign({}, template.codeCell);
-			cell.source = [];
-			isCodeBlock = true;
-			isMathBlock = false;
+		if (line.match(/^```/)){
+			if(isBlock){
+				// close block
+				if (isCodeBlock) {
+					// trim the last line break
+					cell.source[cell.source.length - 1] = cell.source[cell.source.length - 1].replace(/\n$/, "");
+				} else if (isMathBlock) {
+					// do nothing special
+				} else {
+					cell.source.push("```");
+				}
 
-		// ending line of code block
-		} else if (isCodeBlock && line.match(/^```$/)) {
-			// trim the last line break
-			cell.source[cell.source.length - 1] = cell.source[cell.source.length - 1].replace(/\n$/, "");
+				ipynb.cells.push(cell);
+				cell = Object.assign({}, template.markdownCell);
+				cell.source = [];
+				isBlock = false;
+				isCodeBlock = false;
+				isMathBlock = false;
+			} else {
+				// open block
+				isBlock = true;
 
-			ipynb.cells.push(cell);
-			cell = Object.assign({}, template.markdownCell);
-			cell.source = [];
-			isCodeBlock = false;
-			isMathBlock = false;
-
-		// inside code block
-		} else if (isCodeBlock) {
+				if (!isMathBlock && line.match(/^```(?:py\d?|python\d?|.+\.py)?$/)) {
+					ipynb.cells.push(cell);
+					cell = Object.assign({}, template.codeCell);
+					cell.source = [];
+					isCodeBlock = true;
+					isMathBlock = false;
+				} else if (line.match(/^```math/)) {
+					ipynb.cells.push(cell);
+					cell = Object.assign({}, template.markdownCell);
+					cell.source = [];
+					isCodeBlock = false;
+					isMathBlock = true;
+				} else {
+					cell.source.push(line + "\n");
+				}
+			}
+			// add cell contents
+		} else if(isCodeBlock){ 
 			cell.source.push(line + "\n");
-
-		// starting line of math block
-		} else if (line.match(/^```math/)) {
-			ipynb.cells.push(cell);
-			cell = Object.assign({}, template.markdownCell);
-			cell.source = [];
-			isCodeBlock = false;
-			isMathBlock = true;
-
-		// ending line of math block
-		} else if (isMathBlock && line.match(/^```$/)) {
-			ipynb.cells.push(cell);
-			cell = Object.assign({}, template.markdownCell);
-			cell.source = [];
-			isCodeBlock = false;
-			isMathBlock = false;
-
-		// inside math block
 		} else if (isMathBlock) {
 			cell.source.push("$$ " + line + " $$\n");
-
-		// normal block
 		} else {
 			cell.source.push(line.replace(/^(#+)([^#^\s])/, "$1 $2") + "\n");
 		}
