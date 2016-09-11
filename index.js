@@ -69,6 +69,8 @@ function md2ipynb(markdown) {
 					cell.source[cell.source.length - 1] = cell.source[cell.source.length - 1].replace(/\n$/, "");
 				} else if (isMathBlock) {
 					// do nothing special
+				} else {
+					cell.source.push("```");
 				}
 
 				ipynb.cells.push(cell);
@@ -93,6 +95,8 @@ function md2ipynb(markdown) {
 					cell.source = [];
 					isCodeBlock = false;
 					isMathBlock = true;
+				} else {
+					cell.source.push(line + "\n");
 				}
 			}
 			// add cell contents
